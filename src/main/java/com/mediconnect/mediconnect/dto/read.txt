@@ -1,0 +1,19 @@
+Holds Data Transfer Objects (DTOs) — simple Java classes used to transfer data between client and server. 
+They often include validation annotations (@Valid, @NotBlank, @Email, etc.) to ensure incoming data is valid.
+
+Classes:
+1.RegisterRequest.java
+Contains registration data (name, email, password).
+Uses validation to ensure data integrity before processing.
+
+2.LoginRequest.java
+Contains login credentials (email, password).
+Validates inputs before authentication.
+
+3.AppointmentRequest.java
+Contains data needed to book an appointment (doctor ID, date/time).
+Validates correct and complete booking info.
+
+4.ChatRequest.java
+Contains messages or symptom info sent to the AI chatbot.
+Ensures text or voice inputs are correctly formatted.

@@ -1,0 +1,1 @@
+Contains JPA entity classes that map to database tables, representing the core business objects.

@@ -1,0 +1,7 @@
+The service layer is the core business logic layer in a Spring Boot application.
+
+It acts as a bridge between the controller layer (API) and the repository layer (database).
+
+Typical flow -> 
+[Frontend] → [Controller] → [Service] → [Repository] → [Database]
+
