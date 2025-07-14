@@ -1,4 +1,4 @@
-# MediConnect 💊🩺
+# MediConnect 
 
 MediConnect is a smart healthcare platform designed to digitize and streamline doctor-patient interactions. 
 It offers real-time appointment booking, cloud-based medical record storage, live doctor-patient communication, and role-based access for patients, doctors, and administrators.
