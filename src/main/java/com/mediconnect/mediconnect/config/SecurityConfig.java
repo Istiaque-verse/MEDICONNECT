@@ -1,10 +1,9 @@
 package com.mediconnect.mediconnect.config;
 
-// Spring Security + JWT filter chain
-
 import com.mediconnect.mediconnect.security.JwtAuthenticationFilter;
 import com.mediconnect.mediconnect.security.UserDetailsImpl;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,11 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
-/**
- * Security configuration: disables CSRF, allows open access to /api/auth/**,
- * protects other endpoints, sets JWT filter, and password encoder.
- */
 @Configuration
 public class SecurityConfig {
 
@@ -26,39 +20,52 @@ public class SecurityConfig {
     private final UserDetailsImpl userDetailsService;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                        UserDetailsImpl userDetailsService) {
+                          UserDetailsImpl userDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userDetailsService = userDetailsService;
     }
 
-    /**
-     * Configure security filter chain.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())  // Disable CSRF for APIs
+            // ✅ disable CSRF since we’re using JWTs, not cookies
+            .csrf(csrf -> csrf.disable())
+
+            // ✅ authorize requests
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()  // Allow unauthenticated access to auth endpoints
-                .anyRequest().authenticated() // All other endpoints require authentication
+                // Public endpoints (register, login, test, debug etc.)
+                .requestMatchers(
+                        "/api/auth/**",
+                        "/test",
+                        "/api/auth/register-test",
+                        "/api/auth/debug",
+                        "/api/auth/simple",
+                        "/api/auth/register-no-validation"
+                ).permitAll()
+
+                // Role-based access
+                .requestMatchers("/api/user/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/user/doctor/**").hasRole("DOCTOR")
+                .requestMatchers("/api/user/patient/**").hasRole("PATIENT")
+
+                // Everything else requires authentication
+                .anyRequest().authenticated()
             )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No sessions, stateless JWT
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter before Spring auth filter
+
+            // ✅ use stateless session (no HttpSession, only JWTs)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // ✅ add JWT filter before the UsernamePasswordAuthenticationFilter
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    /**
-     * Password encoder bean using BCrypt.
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Expose AuthenticationManager bean.
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

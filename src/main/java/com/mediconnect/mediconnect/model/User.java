@@ -1,15 +1,19 @@
 package com.mediconnect.mediconnect.model;
-/*Represents a system user with roles (PATIENT, DOCTOR, ADMIN), 
-authentication info, and profile data. */
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+/**
+ * Represents a system user with roles (PATIENT, DOCTOR, ADMIN),
+ * authentication info, and profile data.
+ */
 @Entity
 @Table(name = "users")
-@Data // Lombok generates getters, setters, toString, equals, and hashCode
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,22 +24,20 @@ public class User {
     private Long id;
 
     @NotBlank
+    @Column(nullable = false)
     private String name;
 
     @Email
     @NotBlank
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @NotBlank
+    @Column(nullable = false)
     private String password;
 
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role; // PATIENT, DOCTOR, ADMIN
-
-    public User orElseThrow(Object object) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
-    }
 }

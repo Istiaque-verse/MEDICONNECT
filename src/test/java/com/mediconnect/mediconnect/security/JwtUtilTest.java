@@ -13,7 +13,8 @@ public class JwtUtilTest {
 
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil();
+        // ✅ Provide a test secret and expiration time (1 hour = 3600000 ms)
+        jwtUtil = new JwtUtil("my-secret-key-for-testing-1234567890123456", 3600000L);
     }
 
     @Test
