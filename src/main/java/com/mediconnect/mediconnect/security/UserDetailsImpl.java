@@ -29,10 +29,14 @@ public class UserDetailsImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not found: " + email);
         }
 
+        // Create authority from user role
+        org.springframework.security.core.authority.SimpleGrantedAuthority authority = 
+            new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name());
+
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.emptyList()  // Add roles or authorities here if needed
+                Collections.singletonList(authority)  // Add the role as an authority
         );
     }
 }

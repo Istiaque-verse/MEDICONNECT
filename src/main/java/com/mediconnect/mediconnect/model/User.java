@@ -24,7 +24,7 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(name = "full_name", nullable = false)
     private String name;
 
     @Email
@@ -33,7 +33,7 @@ public class User {
     private String email;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String password;
 
     @NotNull

@@ -113,10 +113,10 @@ public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request,
 }
 
     /**
-     * Authenticates a user and returns a JWT token.
+     * Authenticates a user and returns user information directly.
      *
      * @param request LoginRequest DTO with email and password
-     * @return JWT token if authentication successful, 401 Unauthorized if failed
+     * @return User information if authentication successful, 401 Unauthorized if failed
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
@@ -129,15 +129,19 @@ public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request,
                     )
             );
 
-            // Generate JWT (email + role)
+            // Return user information directly
             User user = userRepository.findByEmail(request.getEmail());
             if (user == null) {
                 return ResponseEntity.status(401).body("User not found after authentication");
             }
 
-            String token = jwtUtil.generateToken(user.getEmail());
-
-            return ResponseEntity.ok(new JwtResponse(token));
+            // Return user information (excluding password)
+            return ResponseEntity.ok(Map.of(
+                "id", user.getId(),
+                "name", user.getName(),
+                "email", user.getEmail(),
+                "role", user.getRole().toString()
+            ));
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(401).body("Invalid email or password");
         }
