@@ -1,25 +1,27 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import DashboardLayout from './components/dashboard/DashboardLayout';
-import Dashboard from './components/dashboard/Dashboard';
+import DashboardPage from './components/dashboard/DashboardPage'; // new modern dashboard
 import './App.css';
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
+        
+        {/* Auth pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={
-          <DashboardLayout>
-            <Dashboard />
-          </DashboardLayout>
-        } />
+
+        {/* Modern Dashboard */}
+        <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
+
+

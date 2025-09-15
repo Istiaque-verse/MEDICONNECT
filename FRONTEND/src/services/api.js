@@ -1,115 +1,109 @@
 /**
- * API service for handling HTTP requests to the backend
+ * api.js
+ * Handles all API requests and token management for Mediconnect
  */
 
 // Base URL for API requests
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'http://localhost:8081/api';
 
 /**
  * Helper function to handle HTTP responses
- * @param {Response} response - The fetch response object
- * @returns {Promise} - Promise that resolves to the response data
+ * @param {Response} response - Fetch response object
+ * @returns {Promise} - Resolves to JSON data or throws an error
  */
 const handleResponse = async (response) => {
   if (!response.ok) {
-    // Try to get error message from response
     let errorMessage;
     try {
       const errorData = await response.json();
-      errorMessage = errorData.message || errorData.error || errorData;
+      errorMessage = errorData.message || errorData.error || JSON.stringify(errorData);
     } catch (e) {
       errorMessage = response.statusText;
     }
-    
     throw new Error(errorMessage);
   }
-  
-  // Check if response has content
+
   const contentType = response.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
     return response.json();
   }
-  
+
   return response.text();
 };
 
 /**
- * Authentication service for login, registration, etc.
+ * General request function with optional auth token
+ * @param {string} url - API endpoint
+ * @param {object} options - Fetch options (method, headers, body)
+ */
+const request = async (url, options = {}) => {
+  const token = tokenService.getToken();
+
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+
+  const fetchOptions = { ...options, headers };
+  const response = await fetch(`${API_BASE_URL}${url}`, fetchOptions);
+  return handleResponse(response);
+};
+
+/**
+ * Authentication service
  */
 export const authService = {
-  /**
-   * Login user with email and password
-   * @param {Object} credentials - User credentials
-   * @param {string} credentials.email - User email
-   * @param {string} credentials.password - User password
-   * @returns {Promise} - Promise that resolves to the JWT token response
-   */
-  login: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+  login: async ({ email, password }) => {
+    return request('/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({ email, password }),
     });
-    
-    return handleResponse(response);
   },
-  
-  /**
-   * Register a new user
-   * @param {Object} userData - User registration data
-   * @param {string} userData.name - User's full name
-   * @param {string} userData.email - User's email
-   * @param {string} userData.password - User's password
-   * @param {string} userData.role - User's role (patient, doctor)
-   * @returns {Promise} - Promise that resolves to the registration response
-   */
-  register: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+
+  register: async ({ name, email, password, role }) => {
+    return request('/auth/register', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
+      body: JSON.stringify({ name, email, password, role }),
     });
-    
-    return handleResponse(response);
+  },
+
+  logout: () => {
+    tokenService.removeToken();
   },
 };
 
 /**
- * Token management functions
+ * Token management
  */
 export const tokenService = {
-  /**
-   * Save JWT token to local storage
-   * @param {string} token - JWT token
-   */
-  setToken: (token) => {
-    localStorage.setItem('auth_token', token);
-  },
-  
-  /**
-   * Get JWT token from local storage
-   * @returns {string|null} - JWT token or null if not found
-   */
-  getToken: () => {
-    return localStorage.getItem('auth_token');
-  },
-  
-  /**
-   * Remove JWT token from local storage
-   */
-  removeToken: () => {
-    localStorage.removeItem('auth_token');
-  },
-  
-  /**
-   * Check if user is authenticated (has token)
-   * @returns {boolean} - True if authenticated
-   */
-  isAuthenticated: () => {
-    return !!localStorage.getItem('auth_token');
-  },
+  setToken: (token) => localStorage.setItem('auth_token', token),
+  getToken: () => localStorage.getItem('auth_token'),
+  removeToken: () => localStorage.removeItem('auth_token'),
+  isAuthenticated: () => !!localStorage.getItem('auth_token'),
+};
+
+/**
+ * Example: Users API
+ */
+export const usersService = {
+  getAllUsers: () => request('/users', { method: 'GET' }),
+  getUserById: (id) => request(`/users/${id}`, { method: 'GET' }),
+  updateUser: (id, data) => request(`/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  deleteUser: (id) => request(`/users/${id}`, { method: 'DELETE' }),
+};
+
+/**
+ * Example: Appointments API
+ */
+export const appointmentsService = {
+  getAppointments: () => request('/appointments', { method: 'GET' }),
+  bookAppointment: (data) => request('/appointments', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  cancelAppointment: (id) => request(`/appointments/${id}`, { method: 'DELETE' }),
 };

@@ -14,18 +14,18 @@ import {
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Appointments', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Patients', href: '#', icon: UsersIcon, current: false },
-  { name: 'Medical Records', href: '#', icon: FolderIcon, current: false },
-  { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
-  { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
+  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
+  { name: 'Appointments', href: '/appointments', icon: CalendarIcon, current: false },
+  { name: 'Patients', href: '/patients', icon: UsersIcon, current: false },
+  { name: 'Medical Records', href: '/medical-records', icon: FolderIcon, current: false },
+  { name: 'Reports', href: '/reports', icon: ChartPieIcon, current: false },
+  { name: 'Documents', href: '/documents', icon: DocumentDuplicateIcon, current: false },
 ];
 
 const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
+  { name: 'Your Profile', href: '/profile' },
+  { name: 'Settings', href: '/settings' },
+  { name: 'Sign out', href: '/logout' },
 ];
 
 function classNames(...classes) {
@@ -37,6 +37,7 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div>
+      {/* Mobile sidebar */}
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
           <Transition.Child
@@ -78,14 +79,10 @@ export default function DashboardLayout({ children }) {
                     </button>
                   </div>
                 </Transition.Child>
-                {/* Sidebar component for mobile */}
+
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-600 px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
-                    <img
-                      className="h-8 w-auto"
-                      src="/logo-white.svg"
-                      alt="MediConnect"
-                    />
+                    <img className="h-8 w-auto" src="/logo-white.svg" alt="MediConnect" />
                   </div>
                   <nav className="flex flex-1 flex-col">
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -124,15 +121,11 @@ export default function DashboardLayout({ children }) {
         </Dialog>
       </Transition.Root>
 
-      {/* Static sidebar for desktop */}
+      {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-600 px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
-            <img
-              className="h-8 w-auto"
-              src="/logo-white.svg"
-              alt="MediConnect"
-            />
+            <img className="h-8 w-auto" src="/logo-white.svg" alt="MediConnect" />
           </div>
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -173,10 +166,7 @@ export default function DashboardLayout({ children }) {
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
-
-          {/* Separator */}
           <div className="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true" />
-
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1" />
             <div className="flex items-center gap-x-4 lg:gap-x-6">
@@ -184,17 +174,13 @@ export default function DashboardLayout({ children }) {
                 <span className="sr-only">View notifications</span>
                 <BellIcon className="h-6 w-6" aria-hidden="true" />
               </button>
-
-              {/* Separator */}
               <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true" />
-
-              {/* Profile dropdown */}
               <Menu as="div" className="relative">
                 <Menu.Button className="-m-1.5 flex items-center p-1.5">
                   <span className="sr-only">Open user menu</span>
                   <img
                     className="h-8 w-8 rounded-full bg-gray-50"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                     alt=""
                   />
                   <span className="hidden lg:flex lg:items-center">
@@ -237,9 +223,7 @@ export default function DashboardLayout({ children }) {
         </div>
 
         <main className="py-10">
-          <div className="px-4 sm:px-6 lg:px-8">
-            {children}
-          </div>
+          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
     </div>
