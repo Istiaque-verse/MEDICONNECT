@@ -4,7 +4,7 @@
  */
 
 // Base URL for API requests
-const API_BASE_URL = 'http://localhost:8081/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 /**
  * Helper function to handle HTTP responses

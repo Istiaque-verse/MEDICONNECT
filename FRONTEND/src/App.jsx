@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import DashboardPage from './components/dashboard/DashboardPage'; // new modern dashboard
+import RevampedDashboard from './components/dashboard/RevampedDashboard'; // updated to use revamped dashboard
 import './App.css';
 
 function App() {
@@ -15,8 +15,13 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Modern Dashboard */}
-        <Route path="/dashboard" element={<DashboardPage />} />
+        {/* Revamped Dashboard */}
+        <Route path="/dashboard" element={<RevampedDashboard />} />
+        
+        {/* Additional routes that use the revamped dashboard layout */}
+        <Route path="/appointments" element={<RevampedDashboard />} />
+        <Route path="/medical-records" element={<RevampedDashboard />} />
+        <Route path="/reports" element={<RevampedDashboard />} />
       </Routes>
     </Router>
   );
