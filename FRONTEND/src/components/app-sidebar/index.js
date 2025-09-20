@@ -1,2 +1,3 @@
 // Export the AppSidebar component
-export { default as AppSidebar } from './AppSidebar';  
+export { default } from './AppSidebar';
+export { AppSidebar } from './AppSidebar';

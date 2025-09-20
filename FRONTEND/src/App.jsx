@@ -1,27 +1,36 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import RevampedDashboard from './components/dashboard/RevampedDashboard'; // updated to use revamped dashboard
+import Dashboard from './components/dashboard/Dashboard';
+import ReportsPage from './components/reports/ReportsPage';
+import AppointmentsPage from './components/appointments/AppointmentsPage';
+import ProfilePage from './components/profile/ProfilePage';
+import SettingsPage from './components/settings/SettingsPage';
+import ChatPage from './components/chat/ChatPage';
+import AppLayout from './components/layout/AppLayout';
 import './App.css';
 
 function App() {
+  // In a real app, you would check authentication status here
+  const isAuthenticated = localStorage.getItem('auth_token') !== null;
+
   return (
     <Router>
       <Routes>
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* Auth pages */}
+        {/* Public routes */}
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Revamped Dashboard */}
-        <Route path="/dashboard" element={<RevampedDashboard />} />
         
-        {/* Additional routes that use the revamped dashboard layout */}
-        <Route path="/appointments" element={<RevampedDashboard />} />
-        <Route path="/medical-records" element={<RevampedDashboard />} />
-        <Route path="/reports" element={<RevampedDashboard />} />
+        {/* Protected routes using the new AppLayout */}
+        <Route element={<AppLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/appointments" element={<AppointmentsPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
       </Routes>
     </Router>
   );

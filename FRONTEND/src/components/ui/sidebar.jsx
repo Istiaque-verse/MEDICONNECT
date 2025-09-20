@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 
-// Create context for sidebar state
-const SidebarContext = createContext(null);
+// Sidebar context
+export const SidebarContext = createContext(null);
 
 export function SidebarProvider({ children }) {
   const [open, setOpen] = useState(false);
-  
+
   return (
     <SidebarContext.Provider value={{ open, setOpen }}>
       {children}
@@ -16,7 +16,7 @@ export function SidebarProvider({ children }) {
 
 export function SidebarTrigger({ className, ...props }) {
   const { setOpen } = useContext(SidebarContext);
-  
+
   return (
     <button
       type="button"
@@ -30,11 +30,24 @@ export function SidebarTrigger({ className, ...props }) {
 }
 
 export function SidebarInset({ children }) {
-  const { open } = useContext(SidebarContext);
-  
+  const { open, setOpen } = useContext(SidebarContext);
+
   return (
-    <div className="flex flex-col flex-1 min-h-screen">
-      <div className={`flex flex-col flex-1 ${open ? 'lg:pl-64' : ''}`}>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Mobile overlay */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black opacity-30 lg:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* Main content */}
+      <div
+        className={`flex flex-1 flex-col transition-all duration-200 ${
+          open ? 'lg:pl-64' : ''
+        }`}
+      >
         {children}
       </div>
     </div>
